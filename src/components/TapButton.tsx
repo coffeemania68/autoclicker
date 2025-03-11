@@ -3,7 +3,7 @@ import React, { forwardRef } from 'react';
 import { cn } from '@/lib/utils';
 
 interface TapButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'default' | 'primary' | 'outline' | 'ghost';
+  variant?: 'default' | 'primary' | 'outline' | 'ghost' | 'destructive';
   size?: 'sm' | 'md' | 'lg' | 'xl';
   isActive?: boolean;
 }
@@ -16,7 +16,8 @@ const TapButton = forwardRef<HTMLButtonElement, TapButtonProps>(
       default: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
       primary: "bg-primary text-primary-foreground hover:bg-primary/90",
       outline: "border border-border bg-transparent hover:bg-secondary/50",
-      ghost: "bg-transparent hover:bg-secondary/50"
+      ghost: "bg-transparent hover:bg-secondary/50",
+      destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90"
     };
     
     const sizeClasses = {

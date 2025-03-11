@@ -2,7 +2,7 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { PlayCircle, PauseCircle, Settings2, Plus, RefreshCw } from 'lucide-react';
+import { PlayCircle, PauseCircle, Settings2, Plus, RefreshCw, MoreHorizontal, Target } from 'lucide-react';
 import NumberControl from './NumberControl';
 import TapButton from './TapButton';
 import { cn } from '@/lib/utils';
@@ -13,10 +13,13 @@ interface ControlPanelProps {
   interval: number;
   selectedTargetIndex: number | null;
   targetsCount: number;
+  maxClicks: number;
   onIntervalChange: (value: number) => void;
+  onMaxClicksChange: (value: number) => void;
   onStartStop: () => void;
   onReset: () => void;
   onAddTarget: () => void;
+  onAddMultipleTargets: () => void;
   className?: string;
 }
 
@@ -26,10 +29,13 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
   interval,
   selectedTargetIndex,
   targetsCount,
+  maxClicks,
   onIntervalChange,
+  onMaxClicksChange,
   onStartStop,
   onReset,
   onAddTarget,
+  onAddMultipleTargets,
   className
 }) => {
   return (
@@ -38,15 +44,15 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-medium flex items-center gap-2">
             <Settings2 size={20} className="text-muted-foreground" />
-            Controls
+            북치기 오토클릭커
           </h2>
           <div className="flex items-center gap-2 text-sm">
-            <span className="text-muted-foreground">Targets:</span> 
+            <span className="text-muted-foreground">타겟:</span> 
             <span className="font-medium">{targetsCount}</span>
             {selectedTargetIndex !== null && (
               <>
                 <span className="text-muted-foreground mx-1">|</span>
-                <span className="text-muted-foreground">Selected:</span> 
+                <span className="text-muted-foreground">선택됨:</span> 
                 <span className="font-medium">{selectedTargetIndex + 1}</span>
               </>
             )}
@@ -57,7 +63,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
         
         <div className="grid grid-cols-2 gap-4">
           <NumberControl
-            label="Interval (ms)"
+            label="클릭 간격 (ms)"
             value={interval}
             onChange={onIntervalChange}
             min={50}
@@ -65,11 +71,25 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
             step={50}
           />
           
-          <div className="flex flex-col justify-end">
-            <div className="h-9 flex items-center justify-center rounded-md bg-secondary text-sm">
-              <span className="text-muted-foreground mr-2">Total Clicks:</span>
-              <span className="font-medium">{totalClicks}</span>
-            </div>
+          <NumberControl
+            label="최대 클릭 횟수"
+            value={maxClicks}
+            onChange={onMaxClicksChange}
+            min={1}
+            max={10000}
+            step={100}
+          />
+        </div>
+        
+        <div className="flex items-center justify-between">
+          <div className="h-9 flex items-center justify-center rounded-md bg-secondary text-sm px-3">
+            <span className="text-muted-foreground mr-2">총 클릭:</span>
+            <span className="font-medium">{totalClicks}</span>
+          </div>
+          
+          <div className="h-9 flex items-center justify-center rounded-md bg-secondary text-sm px-3">
+            <span className="text-muted-foreground mr-2">완료율:</span>
+            <span className="font-medium">{maxClicks > 0 ? Math.min(Math.round((totalClicks / maxClicks) * 100), 100) : 0}%</span>
           </div>
         </div>
         
@@ -82,12 +102,12 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
             {isRunning ? (
               <div className="flex items-center gap-2">
                 <PauseCircle size={20} />
-                <span>Stop</span>
+                <span>정지</span>
               </div>
             ) : (
               <div className="flex items-center gap-2">
                 <PlayCircle size={20} />
-                <span>Start</span>
+                <span>시작</span>
               </div>
             )}
           </TapButton>
@@ -99,7 +119,18 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
           >
             <div className="flex items-center gap-2">
               <Plus size={20} />
-              <span>Add Target</span>
+              <span>타겟 추가</span>
+            </div>
+          </TapButton>
+          
+          <TapButton
+            variant="outline"
+            className="w-full sm:flex-1"
+            onClick={onAddMultipleTargets}
+          >
+            <div className="flex items-center gap-2">
+              <Target size={20} />
+              <span>타겟 5개 추가</span>
             </div>
           </TapButton>
           
